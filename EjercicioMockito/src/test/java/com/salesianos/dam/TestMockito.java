@@ -38,19 +38,27 @@ public class TestMockito {
 // Caja negra
     @Test
     public void whenNuevaVenta_thenReturnVenta(){
-        Cliente cliente = new Cliente();
-        cliente.setNombre("Alejandro");
-        LineaDeVenta lineaDeVenta = new LineaDeVenta(new Producto("1","Ordenador Portátil",699.0),10,6990.0);
-        List<LineaDeVenta> lista = new ArrayList<>();
-        lista.add(lineaDeVenta);
-        Venta v2 = new Venta(1L, LocalDate.of(2022,01,18),lista,cliente);
+        Cliente c = Cliente.builder()
+                .dni("12312312A")
+                .email("Ale@mgmail.com")
+                .nombre("Alejandro")
+                .build();
 
-        lenient().when(productoRepositorio.findOne("1")).thenReturn(new Producto("1", "Ordenador portátil", 699.0));
-        
-        lenient().when(ventaRepositorio.save(v2)).thenReturn(v2);
+        Producto p = Producto.builder()
+                .codigoProducto("1")
+                .nombre("Producto")
+                .precio(12.36)
+                .build();
 
-        Venta v = ventaServicio.nuevaVenta(Map.of("1", 10), cliente);
-        assertEquals(v2.getId(),v.getId());
+        lenient().when(productoRepositorio.findOne("1")).thenReturn(p);
+        Map<String,Integer> carrito = Map.of("1",2);
+        Venta v = new Venta();
+        v.setId(3l);
+        v.setCliente(c);
+        v.setLineasDeVenta(List.of(new LineaDeVenta(p,2,12.36)));
+        lenient().when(ventaRepositorio.save(v)).thenReturn(v);
+        System.out.println(v.equals(ventaServicio.nuevaVenta(carrito,c)));
+        assertEquals(v,ventaServicio.nuevaVenta(carrito,c));
     }
     //Caja blanca
     @Test
