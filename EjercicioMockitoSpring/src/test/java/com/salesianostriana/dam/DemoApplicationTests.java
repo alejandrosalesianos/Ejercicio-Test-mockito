@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.lenient;
 
@@ -60,7 +61,7 @@ class DemoApplicationTests {
 
 		lenient().when(productoRepositorio.findById(1L)).thenReturn(java.util.Optional.ofNullable(p));
 		lenient().when(ventaRepositorio.save(v)).thenReturn(v);
-		assertEquals(v.hashCode(),ventaServicio.nuevaVenta(venta,c).hashCode());
+		assertThat(v.equals(ventaServicio.nuevaVenta(venta,c)));
 	}
 	//Caja blanca
 	@Test
@@ -81,7 +82,7 @@ class DemoApplicationTests {
 
 		lenient().when(productoRepositorio.findById(2L)).thenReturn(Optional.of(new Producto(2L, "2", "Ordenador de sobremesa", 499.0)));
 		lenient().when(ventaRepositorio.findById(1L)).thenReturn(optionalVenta);
-		lenient().when(ventaRepositorio.save(optionalVenta.get())).thenReturn(venta);
+		lenient().when(ventaRepositorio.save(venta)).thenReturn(venta);
 
 
 		Venta v2 = ventaServicio.addProductoToVenta(1L,2L,10);
@@ -104,10 +105,9 @@ class DemoApplicationTests {
 
 
 		lenient().when(ventaRepositorio.findById(1L)).thenReturn(optionalVenta);
-		lenient().when(ventaRepositorio.save(optionalVenta.get())).thenReturn(venta);
+		lenient().when(ventaRepositorio.save(venta)).thenReturn(venta);
 
 		Venta v2 = ventaServicio.removeLineaVenta(1L,2L);
-		System.out.println(v2);
 		assertEquals(venta,v2);
 	}
 
